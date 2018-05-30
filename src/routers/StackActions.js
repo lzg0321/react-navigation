@@ -2,6 +2,7 @@ const POP = 'Navigation/POP';
 const POP_TO_TOP = 'Navigation/POP_TO_TOP';
 const PUSH = 'Navigation/PUSH';
 const RESET = 'Navigation/RESET';
+const REPLACE_WITH_ANIMATION = 'Navigation/REPLACE_WITH_ANIMATION';
 const REPLACE = 'Navigation/REPLACE';
 const COMPLETE_TRANSITION = 'Navigation/COMPLETE_TRANSITION';
 
@@ -30,6 +31,11 @@ const replace = payload => ({
   ...payload,
 });
 
+const replaceWithAnimation = payload => ({
+  type: REPLACE_WITH_ANIMATION,
+  ...payload,
+});
+
 const completeTransition = payload => ({
   type: COMPLETE_TRANSITION,
   ...payload,
@@ -41,6 +47,7 @@ export default {
   PUSH,
   RESET,
   REPLACE,
+  REPLACE_WITH_ANIMATION,
   COMPLETE_TRANSITION,
 
   pop,
@@ -48,5 +55,6 @@ export default {
   push,
   reset,
   replace,
+  replaceWithAnimation,
   completeTransition,
 };
