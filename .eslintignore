@@ -3,6 +3,6 @@ flow
 node_modules
 lib*
 build
-
+src
 ## Temporary
 examples

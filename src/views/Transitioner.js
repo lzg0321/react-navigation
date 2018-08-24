@@ -107,18 +107,22 @@ class Transitioner extends React.Component {
     delete transitionSpec.timing;
 
     const toValue = nextProps.navigation.state.index;
-    const positionHasChanged = position.__getValue() !== toValue;
+    const nextStatePositionValue = position.__getValue();
+    const positionHasChanged = nextStatePositionValue !== toValue;
 
-    let {index, routes} = nextProps.navigation.state
-    const keyHasChanged = routes[index].key !== this.state.scenes[position.__getValue()].route.key
+    let { routes } = nextProps.navigation.state;
+    const keyHasChanged =
+      !!this.state.scenes[nextStatePositionValue] &&
+      routes[toValue].key !==
+        this.state.scenes[nextStatePositionValue].route.key;
 
     // Replacement detected
     if (keyHasChanged === false && positionHasChanged) {
       //use the final navigation state index for the current last scene, so it can receive pointerEvents
-      this.state.scenes[this.state.scenes.length - 1].index = nextProps.navigation.state.index
+      this.state.scenes[this.state.scenes.length - 1].index = toValue;
 
       //use the final navigation state index for the current position, so it can be rendered correctly
-      this.state.position.setValue(nextProps.navigation.state.index)
+      this.state.position.setValue(toValue);
     }
 
     // if swiped back, indexHasChanged == true && positionHasChanged == false
