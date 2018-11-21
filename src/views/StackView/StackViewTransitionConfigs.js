@@ -65,7 +65,8 @@ function defaultTransitionConfig(
   prevTransitionProps,
   isModal
 ) {
-  if (Platform.OS === 'android') {
+  /* todo 安卓和ios使用相同的切换动画
+if (Platform.OS === 'android') {
     // Use the default Android animation no matter if the screen is a modal.
     // Android doesn't have full-screen modals like iOS does, it has dialogs.
     if (
@@ -76,7 +77,7 @@ function defaultTransitionConfig(
       return FadeOutToBottomAndroid;
     }
     return FadeInFromBottomAndroid;
-  }
+  }*/
   // iOS and other platforms
   if (isModal) {
     return ModalSlideFromBottomIOS;
