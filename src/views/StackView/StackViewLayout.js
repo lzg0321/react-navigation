@@ -426,17 +426,31 @@ class StackViewLayout extends React.Component {
       styles.container,
       this._getTransitionConfig().containerStyle,
     ];
-
+    const hasReNavigate = this._hasScenesReNavigate(scenes);
     return (
       <View {...handlers} style={containerStyle}>
         <View style={styles.scenes}>
-          {scenes.map(s => this._renderCard(s))}
+          {scenes.map(s =>
+            this.filter(s => !(s.isStale && hasReNavigate))._renderCard(s)
+          )}
         </View>
         {floatingHeader}
       </View>
     );
   }
-
+  _hasScenesReNavigate(scenes) {
+    const scenesCount = scenes.length;
+    const doubleIndex =
+      scenesCount >= 2 &&
+      scenes[scenesCount - 1].index === scenes[scenesCount - 2].index;
+    let hasReNavigate = false;
+    if (doubleIndex) {
+      const route = scenes[scenesCount - 1].route;
+      const prevRoute = scenes[scenesCount - 2].route;
+      hasReNavigate = route.routeName === prevRoute.routeName;
+    }
+    return hasReNavigate;
+  }
   _getHeaderMode() {
     if (this.props.headerMode) {
       return this.props.headerMode;
