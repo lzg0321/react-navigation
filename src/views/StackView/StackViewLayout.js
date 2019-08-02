@@ -430,9 +430,9 @@ class StackViewLayout extends React.Component {
     return (
       <View {...handlers} style={containerStyle}>
         <View style={styles.scenes}>
-          {scenes.map(s =>
-            this.filter(s => !(s.isStale && hasReNavigate))._renderCard(s)
-          )}
+          {scenes
+            .filter(s => !(s.isStale && hasReNavigate))
+            .map(s => this._renderCard(s))}
         </View>
         {floatingHeader}
       </View>
