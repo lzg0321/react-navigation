@@ -179,7 +179,8 @@ export default (routeConfigs, stackConfig = {}) => {
             params,
             action,
           }),
-        replaceWithAnimation: (routeName, params, action) => StackActions.replaceWithAnimation({ routeName, params, action }),
+        replaceWithAnimation: (routeName, params, action) =>
+          StackActions.replaceWithAnimation({ routeName, params, action }),
         replace: (replaceWith, params, action, newKey) => {
           if (typeof replaceWith === 'string') {
             return StackActions.replace({
@@ -269,11 +270,18 @@ export default (routeConfigs, stackConfig = {}) => {
             );
 
             if (nextRouteState === null || nextRouteState !== childRoute) {
-              return StateUtils.replaceAndPrune(
+              const newState = StateUtils.replaceAndPrune(
                 state,
                 nextRouteState ? nextRouteState.key : childRoute.key,
                 nextRouteState ? nextRouteState : childRoute
               );
+              return {
+                ...newState,
+                isTransitioning:
+                  state.index !== newState.index
+                    ? action.immediate !== true
+                    : state.isTransitioning,
+              };
             }
           }
         }
@@ -357,18 +365,19 @@ export default (routeConfigs, stackConfig = {}) => {
             // We only mark the current screen as dead.
             if (index === state.routes.length - 1) {
               if (eachRoute.params) {
-                eachRoute.params.willBeRemoved = true
+                eachRoute.params.willBeRemoved = true;
               } else {
-                eachRoute.params = {willBeRemoved: true}
+                eachRoute.params = { willBeRemoved: true };
               }
             }
-            return eachRoute
-          })
+            return eachRoute;
+          });
         }
         return {
           ...StateUtils.push(state, route),
           isTransitioning: action.immediate !== true,
-          removeAfterTransition: action.type === StackActions.REPLACE_WITH_ANIMATION,
+          removeAfterTransition:
+            action.type === StackActions.REPLACE_WITH_ANIMATION,
         };
       } else if (
         action.type === StackActions.PUSH &&
@@ -467,22 +476,22 @@ export default (routeConfigs, stackConfig = {}) => {
         state.isTransitioning
       ) {
         if (state.removeAfterTransition === true) {
-          let routes = state.routes
+          let routes = state.routes;
 
-          routes = routes.filter((eachRoute) => {
+          routes = routes.filter(eachRoute => {
             if (eachRoute.params && eachRoute.params.willBeRemoved) {
-              state.index--
-              return false
+              state.index--;
+              return false;
             }
-            return true
-          })
+            return true;
+          });
 
           return {
             ...state,
             routes: routes,
             isTransitioning: false,
-            removeAfterTransition: false
-          }
+            removeAfterTransition: false,
+          };
         } else {
           return {
             ...state,
