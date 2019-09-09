@@ -1,9 +1,15 @@
 import NavigationActions from '../NavigationActions';
 import invariant from '../utils/invariant';
 let timestamp = null;
+let backtimestamp = null;
 const getNavigationActionCreators = route => {
   return {
     goBack: key => {
+      if (!!backtimestamp && new Date() - backtimestamp < 500) {
+        return {
+          type: 'do-not-do-anything-please',
+        };
+      }
       let actualizedKey = key;
       if (key === undefined && route.key) {
         invariant(typeof route.key === 'string', 'key should be a string');
@@ -12,7 +18,7 @@ const getNavigationActionCreators = route => {
       return NavigationActions.back({ key: actualizedKey });
     },
     navigate: (navigateTo, params, action) => {
-      if (!!timestamp && new Date() - timestamp < 300) {
+      if (!!timestamp && new Date() - timestamp < 500) {
         return {
           type: 'do-not-do-anything-please',
         };

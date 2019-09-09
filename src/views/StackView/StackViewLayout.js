@@ -434,11 +434,12 @@ class StackViewLayout extends React.Component {
         <View style={styles.scenes}>
           {scenes
             .filter((s, index) => {
-              const isPreviousOut =
-                scenes[index - 1] &&
-                !scenes[index - 1].isActive &&
-                scenes[index - 1].isStale;
-              return !(s.isStale && hasReNavigate) && !isPreviousOut;
+              // const isPreviousOut =
+              //   scenes[index - 1] &&
+              //   !scenes[index - 1].isActive &&
+              //   scenes[index - 1].isStale;
+              return !(s.isStale && hasReNavigate);
+              // && !isPreviousOut;
             })
             .map(s => this._renderCard(s))}
         </View>
