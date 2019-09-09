@@ -63,12 +63,13 @@ export default function ScenesReducer(
   scenes,
   nextState,
   prevState,
-  descriptors
+  descriptors,
+  isTransitionRunning
 ) {
   if (prevState === nextState) {
     return scenes;
   }
-
+  let scenesToBeRemoved = [];
   const prevScenes = new Map();
   const freshScenes = new Map();
   const staleScenes = new Map();
@@ -81,7 +82,6 @@ export default function ScenesReducer(
     }
     prevScenes.set(key, scene);
   });
-
   const nextKeys = new Set();
   nextState.routes.forEach((route, index) => {
     const key = SCENE_KEY_PREFIX + route.key;
@@ -110,6 +110,20 @@ export default function ScenesReducer(
     }
     freshScenes.set(key, scene);
   });
+  if (isTransitionRunning) {
+    staleScenes.forEach(staleScene => {
+      if (
+        !nextState.routes.find(
+          route => staleScene.key === SCENE_KEY_PREFIX + route.key
+        ) &&
+        !prevState.routes.find(
+          route => staleScene.key === SCENE_KEY_PREFIX + route.key
+        )
+      ) {
+        scenesToBeRemoved.push(staleScene);
+      }
+    });
+  }
 
   if (prevState) {
     // Look at the previous routes and classify any removed scenes as `stale`.
@@ -120,7 +134,6 @@ export default function ScenesReducer(
       }
       const lastScene = scenes.find(scene => scene.route.key === route.key);
       const descriptor = lastScene && lastScene.descriptor;
-
       staleScenes.set(key, {
         index,
         isActive: false,
@@ -137,12 +150,16 @@ export default function ScenesReducer(
   const mergeScene = nextScene => {
     const { key } = nextScene;
     const prevScene = prevScenes.has(key) ? prevScenes.get(key) : null;
+    let sceneToBePushed;
     if (prevScene && areScenesShallowEqual(prevScene, nextScene)) {
       // Reuse `prevScene` as `scene` so view can avoid unnecessary re-render.
       // This assumes that the scene's navigation state is immutable.
-      nextScenes.push(prevScene);
+      sceneToBePushed = prevScene;
     } else {
-      nextScenes.push(nextScene);
+      sceneToBePushed = nextScene;
+    }
+    if (!scenesToBeRemoved.find(s => s.key === sceneToBePushed.key)) {
+      nextScenes.push(sceneToBePushed);
     }
   };
 

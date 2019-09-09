@@ -57,7 +57,8 @@ class Transitioner extends React.Component {
       this.state.scenes,
       nextProps.navigation.state,
       this.props.navigation.state,
-      nextProps.descriptors
+      nextProps.descriptors,
+      this._isTransitionRunning
     );
     if (!nextProps.navigation.state.isTransitioning) {
       nextScenes = filterStale(nextScenes);
